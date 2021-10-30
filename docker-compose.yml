@@ -1,0 +1,30 @@
+version: '3'
+volumes:
+  data:
+services:
+  db:
+    image: postgres:9.6
+    environment:
+      POSTGRES_PASSWORD: ${DB_PW}
+    volumes:
+      #Volumes of data
+      - data:/var/lib/postgresql/data
+      #Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+  frontend:
+    image: nginx:1.13
+    volumes:
+      #Site
+      - ./web:/usr/share/nginx/html/
+    ports:
+      - 80:80
+  app:
+    image: python:3.6
+    volumes:
+      #application
+      - ./app:/app
+    working_dir: /app
+    command: bash ./app.sh
+    ports:
+      - 8080:8080
